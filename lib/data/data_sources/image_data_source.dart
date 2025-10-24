@@ -33,17 +33,17 @@ Uint8List _applyFrameInIsolate(FrameParams params) {
   final framedWidth = originalImage.width + (frameThickness * 2);
   final framedHeight = originalImage.height + (frameThickness * 2);
 
-  final framedImage = img.Image(
-    width: framedWidth,
-    height: framedHeight,
-  );
+  final framedImage = img.Image(width: framedWidth, height: framedHeight);
 
   // Fill with frame color
-  img.fill(framedImage, color: img.ColorRgb8(
-    (params.frameColor >> 16) & 0xFF,
-    (params.frameColor >> 8) & 0xFF,
-    params.frameColor & 0xFF,
-  ));
+  img.fill(
+    framedImage,
+    color: img.ColorRgb8(
+      (params.frameColor >> 16) & 0xFF,
+      (params.frameColor >> 8) & 0xFF,
+      params.frameColor & 0xFF,
+    ),
+  );
 
   // Composite the original image onto the frame
   img.compositeImage(
@@ -129,10 +129,9 @@ class ImageDataSource {
 
   Future<void> shareImageFile(String imagePath) async {
     try {
-      await Share.shareXFiles(
-        [XFile(imagePath)],
-        text: 'Check out my framed photo!',
-      );
+      await Share.shareXFiles([
+        XFile(imagePath),
+      ], text: 'Check out my framed photo!');
     } catch (e) {
       throw Exception('Failed to share image: $e');
     }

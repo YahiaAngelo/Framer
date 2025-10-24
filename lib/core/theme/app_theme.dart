@@ -22,8 +22,6 @@ const Color _onErrorLight = Color(0xFFFFFFFF);
 const Color _errorContainerLight = Color(0xFFFFDAD6);
 const Color _onErrorContainerLight = Color(0xFF410002);
 
-const Color _backgroundLight = Color(0xFFFFF8F1);
-const Color _onBackgroundLight = Color(0xFF1F1B13);
 const Color _surfaceLight = Color(0xFFFFF8F1);
 const Color _onSurfaceLight = Color(0xFF1F1B13);
 
@@ -57,8 +55,6 @@ const Color _onErrorDark = Color(0xFF690005);
 const Color _errorContainerDark = Color(0xFF93000A);
 const Color _onErrorContainerDark = Color(0xFFFFDAD6);
 
-const Color _backgroundDark = Color(0xFF16130B);
-const Color _onBackgroundDark = Color(0xFFEAE1D4);
 const Color _surfaceDark = Color(0xFF16130B);
 const Color _onSurfaceDark = Color(0xFFEAE1D4);
 
@@ -119,9 +115,7 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
         elevation: 1,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     ),
     cardTheme: const CardThemeData(
@@ -185,9 +179,7 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
         elevation: 1,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     ),
     cardTheme: const CardThemeData(

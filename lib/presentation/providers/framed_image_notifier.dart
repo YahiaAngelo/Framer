@@ -22,17 +22,23 @@ class FramedImageNotifier extends StateNotifier<AsyncValue<FramedImage>> {
     required this.shareImageUseCase,
     required this.preferencesService,
     required this.ref,
-  }) : super(AsyncValue.data(FramedImage(
-          frameSize: preferencesService?.getFrameSize() ?? 0.05,
-          frameColor: preferencesService?.getFrameColor() ?? 0xFFFFFFF5,
-        )));
+  }) : super(
+         AsyncValue.data(
+           FramedImage(
+             frameSize: preferencesService?.getFrameSize() ?? 0.05,
+             frameColor: preferencesService?.getFrameColor() ?? 0xFFFFFFF5,
+           ),
+         ),
+       );
 
   Future<void> pickImage() async {
     // Preserve current frame settings before loading
-    final currentState = state.value ?? FramedImage(
-      frameSize: preferencesService?.getFrameSize() ?? 0.05,
-      frameColor: preferencesService?.getFrameColor() ?? 0xFFFFFFF5,
-    );
+    final currentState =
+        state.value ??
+        FramedImage(
+          frameSize: preferencesService?.getFrameSize() ?? 0.05,
+          frameColor: preferencesService?.getFrameColor() ?? 0xFFFFFFF5,
+        );
     final savedFrameSize = currentState.frameSize;
     final savedFrameColor = currentState.frameColor;
 
@@ -45,7 +51,7 @@ class FramedImageNotifier extends StateNotifier<AsyncValue<FramedImage>> {
           framedImage: null,
           imageWidth: pickedImage.width,
           imageHeight: pickedImage.height,
-          frameSize: savedFrameSize,  // Preserve frame size
+          frameSize: savedFrameSize, // Preserve frame size
           frameColor: savedFrameColor, // Preserve frame color
         );
 
@@ -58,7 +64,6 @@ class FramedImageNotifier extends StateNotifier<AsyncValue<FramedImage>> {
       state = AsyncValue.error(e, st);
     }
   }
-
 
   Future<void> saveImage() async {
     final currentState = state.value;
@@ -112,9 +117,7 @@ class FramedImageNotifier extends StateNotifier<AsyncValue<FramedImage>> {
     if (currentState == null || !currentState.hasImage) return;
 
     // Update state immediately - no processing
-    state = AsyncValue.data(
-      currentState.copyWith(frameSize: size),
-    );
+    state = AsyncValue.data(currentState.copyWith(frameSize: size));
 
     // Save to preferences
     preferencesService?.saveFrameSize(size);
@@ -125,18 +128,18 @@ class FramedImageNotifier extends StateNotifier<AsyncValue<FramedImage>> {
     if (currentState == null || !currentState.hasImage) return;
 
     // Update state immediately - no processing
-    state = AsyncValue.data(
-      currentState.copyWith(frameColor: color),
-    );
+    state = AsyncValue.data(currentState.copyWith(frameColor: color));
 
     // Save to preferences
     preferencesService?.saveFrameColor(color);
   }
 
   void reset() {
-    state = AsyncValue.data(FramedImage(
-      frameSize: preferencesService?.getFrameSize() ?? 0.05,
-      frameColor: preferencesService?.getFrameColor() ?? 0xFFFFFFF5,
-    ));
+    state = AsyncValue.data(
+      FramedImage(
+        frameSize: preferencesService?.getFrameSize() ?? 0.05,
+        frameColor: preferencesService?.getFrameColor() ?? 0xFFFFFFF5,
+      ),
+    );
   }
 }

@@ -11,7 +11,9 @@ import '../../core/services/preferences_service.dart';
 import 'framed_image_notifier.dart';
 
 // Preferences Service Provider
-final preferencesServiceProvider = FutureProvider<PreferencesService>((ref) async {
+final preferencesServiceProvider = FutureProvider<PreferencesService>((
+  ref,
+) async {
   return await PreferencesService.init();
 });
 
@@ -48,33 +50,34 @@ final shareImageUseCaseProvider = Provider<ShareImageUseCase>((ref) {
 });
 
 // State Notifier Provider
-final framedImageProvider = StateNotifierProvider<FramedImageNotifier, AsyncValue<FramedImage>>((ref) {
-  final prefsAsync = ref.watch(preferencesServiceProvider);
+final framedImageProvider =
+    StateNotifierProvider<FramedImageNotifier, AsyncValue<FramedImage>>((ref) {
+      final prefsAsync = ref.watch(preferencesServiceProvider);
 
-  return prefsAsync.when(
-    data: (prefs) => FramedImageNotifier(
-      pickImageUseCase: ref.watch(pickImageUseCaseProvider),
-      applyFrameUseCase: ref.watch(applyFrameUseCaseProvider),
-      saveImageUseCase: ref.watch(saveImageUseCaseProvider),
-      shareImageUseCase: ref.watch(shareImageUseCaseProvider),
-      preferencesService: prefs,
-      ref: ref,
-    ),
-    loading: () => FramedImageNotifier(
-      pickImageUseCase: ref.watch(pickImageUseCaseProvider),
-      applyFrameUseCase: ref.watch(applyFrameUseCaseProvider),
-      saveImageUseCase: ref.watch(saveImageUseCaseProvider),
-      shareImageUseCase: ref.watch(shareImageUseCaseProvider),
-      preferencesService: null,
-      ref: ref,
-    ),
-    error: (_, __) => FramedImageNotifier(
-      pickImageUseCase: ref.watch(pickImageUseCaseProvider),
-      applyFrameUseCase: ref.watch(applyFrameUseCaseProvider),
-      saveImageUseCase: ref.watch(saveImageUseCaseProvider),
-      shareImageUseCase: ref.watch(shareImageUseCaseProvider),
-      preferencesService: null,
-      ref: ref,
-    ),
-  );
-});
+      return prefsAsync.when(
+        data: (prefs) => FramedImageNotifier(
+          pickImageUseCase: ref.watch(pickImageUseCaseProvider),
+          applyFrameUseCase: ref.watch(applyFrameUseCaseProvider),
+          saveImageUseCase: ref.watch(saveImageUseCaseProvider),
+          shareImageUseCase: ref.watch(shareImageUseCaseProvider),
+          preferencesService: prefs,
+          ref: ref,
+        ),
+        loading: () => FramedImageNotifier(
+          pickImageUseCase: ref.watch(pickImageUseCaseProvider),
+          applyFrameUseCase: ref.watch(applyFrameUseCaseProvider),
+          saveImageUseCase: ref.watch(saveImageUseCaseProvider),
+          shareImageUseCase: ref.watch(shareImageUseCaseProvider),
+          preferencesService: null,
+          ref: ref,
+        ),
+        error: (_, __) => FramedImageNotifier(
+          pickImageUseCase: ref.watch(pickImageUseCaseProvider),
+          applyFrameUseCase: ref.watch(applyFrameUseCaseProvider),
+          saveImageUseCase: ref.watch(saveImageUseCaseProvider),
+          shareImageUseCase: ref.watch(shareImageUseCaseProvider),
+          preferencesService: null,
+          ref: ref,
+        ),
+      );
+    });

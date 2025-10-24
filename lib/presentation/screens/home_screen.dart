@@ -14,62 +14,61 @@ class HomeScreen extends ConsumerWidget {
     final isProcessing = ref.watch(isProcessingProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Framer'),
-      ),
+      appBar: AppBar(title: const Text('Framer')),
       body: Stack(
         children: [
           framedImageState.when(
-        data: (framedImage) {
-          return SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: framedImage.hasImage
-                        ? _buildImagePreviewWithFrame(
-                            framedImage.originalImage!,
-                            framedImage.frameSize,
-                            framedImage.frameColor,
-                          )
-                        : _buildPlaceholder(context, ref),
-                  ),
+            data: (framedImage) {
+              return SafeArea(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: framedImage.hasImage
+                            ? _buildImagePreviewWithFrame(
+                                framedImage.originalImage!,
+                                framedImage.frameSize,
+                                framedImage.frameColor,
+                              )
+                            : _buildPlaceholder(context, ref),
+                      ),
+                    ),
+                    if (framedImage.hasImage) ...[
+                      _buildControls(context, ref, framedImage),
+                      const SizedBox(height: 16),
+                      _buildActions(context, ref, framedImage),
+                      const SizedBox(height: 24),
+                    ],
+                  ],
                 ),
-                if (framedImage.hasImage) ...[
-                  _buildControls(context, ref, framedImage),
-                  const SizedBox(height: 16),
-                  _buildActions(context, ref, framedImage),
-                  const SizedBox(height: 24),
-                ],
-              ],
+              );
+            },
+            loading: () => const Center(
+              child: CircularProgressIndicator(color: Color(0xFF2C2C2C)),
             ),
-          );
-        },
-        loading: () => const Center(
-          child: CircularProgressIndicator(
-            color: Color(0xFF2C2C2C),
-          ),
-        ),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 16),
-              Text('Error: $error'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => ref.read(framedImageProvider.notifier).reset(),
-                child: const Text('Try Again'),
+            error: (error, stack) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text('Error: $error'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () =>
+                        ref.read(framedImageProvider.notifier).reset(),
+                    child: const Text('Try Again'),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
           // Processing overlay
           if (isProcessing)
             Container(
-              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+              color: Theme.of(
+                context,
+              ).colorScheme.surface.withValues(alpha: 0.8),
               child: Center(
                 child: Card(
                   child: Padding(
@@ -116,13 +115,12 @@ class HomeScreen extends ConsumerWidget {
             ],
             borderRadius: BorderRadius.circular(8),
           ),
-          padding: EdgeInsets.all(constraints.maxWidth * frameSize), // Proportional frame
+          padding: EdgeInsets.all(
+            constraints.maxWidth * frameSize,
+          ), // Proportional frame
           child: ClipRRect(
             borderRadius: BorderRadius.circular(4),
-            child: Image.memory(
-              imageBytes,
-              fit: BoxFit.contain,
-            ),
+            child: Image.memory(imageBytes, fit: BoxFit.contain),
           ),
         );
       },
@@ -185,7 +183,10 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(12),
@@ -202,18 +203,28 @@ class HomeScreen extends ConsumerWidget {
             ),
             Row(
               children: [
-                Icon(Icons.remove, size: 20, color: theme.colorScheme.onSurfaceVariant),
+                Icon(
+                  Icons.remove,
+                  size: 20,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
                 Expanded(
                   child: Slider(
                     value: framedImage.frameSize,
                     min: 0.01,
                     max: 0.15,
                     onChanged: (value) {
-                      ref.read(framedImageProvider.notifier).updateFrameSize(value);
+                      ref
+                          .read(framedImageProvider.notifier)
+                          .updateFrameSize(value);
                     },
                   ),
                 ),
-                Icon(Icons.add, size: 20, color: theme.colorScheme.onSurfaceVariant),
+                Icon(
+                  Icons.add,
+                  size: 20,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -256,16 +267,15 @@ class HomeScreen extends ConsumerWidget {
               color: Color(colorValue),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Theme.of(ref.context).colorScheme.outline.withValues(alpha: 0.3),
+                color: Theme.of(
+                  ref.context,
+                ).colorScheme.outline.withValues(alpha: 0.3),
                 width: 1.5,
               ),
             ),
           ),
           const SizedBox(height: 6),
-          Text(
-            label,
-            style: Theme.of(ref.context).textTheme.labelSmall,
-          ),
+          Text(label, style: Theme.of(ref.context).textTheme.labelSmall),
         ],
       ),
     );
@@ -280,7 +290,8 @@ class HomeScreen extends ConsumerWidget {
             child: ActionButton(
               icon: Icons.refresh,
               label: 'New',
-              onPressed: () => ref.read(framedImageProvider.notifier).pickImage(),
+              onPressed: () =>
+                  ref.read(framedImageProvider.notifier).pickImage(),
             ),
           ),
           const SizedBox(width: 12),
@@ -297,7 +308,9 @@ class HomeScreen extends ConsumerWidget {
                           SnackBar(
                             content: const Text('Image saved successfully!'),
                             behavior: SnackBarBehavior.floating,
-                            backgroundColor: Theme.of(context).colorScheme.tertiary,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.tertiary,
                           ),
                         );
                       }
