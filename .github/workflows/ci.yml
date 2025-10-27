@@ -21,7 +21,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.9.2'
+          flutter-version: '3.35.4'
           channel: 'stable'
           cache: true
 
@@ -49,13 +49,14 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '17'
+          cache: 'gradle'
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.9.2'
+          flutter-version: '3.35.4'
           channel: 'stable'
           cache: true
 
@@ -83,7 +84,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.9.2'
+          flutter-version: '3.35.4'
           channel: 'stable'
           cache: true
 
