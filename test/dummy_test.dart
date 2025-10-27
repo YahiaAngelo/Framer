@@ -1,3 +1,8 @@
+import 'package:flutter_test/flutter_test.dart';
+
+// dummy test function to pass the flutter test command
 void main() {
-  // This is a dummy test file to ensure the test directory is not empty.
+  test('dummy test', () {
+    expect(1 + 1, 2);
+  });
 }
