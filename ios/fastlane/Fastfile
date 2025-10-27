@@ -1,0 +1,152 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    setup_ci if ENV['CI']
+
+    # Build the app
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          "io.github.yahiaangelo.framer" => ENV["PROVISIONING_PROFILE_SPECIFIER"]
+        }
+      }
+    )
+
+    # Upload to TestFlight
+    upload_to_testflight(
+      api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
+      skip_waiting_for_build_processing: true,
+      skip_submission: true,
+      distribute_external: false,
+      notify_external_testers: false
+    )
+  end
+
+  desc "Build and upload to TestFlight using Flutter"
+  lane :release_testflight do
+    setup_ci if ENV['CI']
+
+    # Build using Flutter
+    sh("cd ../.. && flutter build ipa --release --export-options-plist=ios/ExportOptions.plist")
+
+    # Upload to TestFlight
+    upload_to_testflight(
+      api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
+      skip_waiting_for_build_processing: true,
+      skip_submission: true,
+      distribute_external: false,
+      notify_external_testers: false,
+      ipa: "../build/ios/ipa/framer.ipa"
+    )
+  end
+
+  desc "Build and upload to TestFlight with external testing"
+  lane :release_testflight_external do
+    setup_ci if ENV['CI']
+
+    # Build using Flutter
+    sh("cd ../.. && flutter build ipa --release --export-options-plist=ios/ExportOptions.plist")
+
+    # Upload to TestFlight with external testing
+    upload_to_testflight(
+      api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
+      skip_waiting_for_build_processing: false,
+      distribute_external: true,
+      notify_external_testers: true,
+      changelog: "Bug fixes and improvements",
+      groups: ["External Testers"],
+      ipa: "../build/ios/ipa/framer.ipa"
+    )
+  end
+
+  desc "Submit a new build to the App Store for review"
+  lane :release_appstore do
+    setup_ci if ENV['CI']
+
+    # Build using Flutter
+    sh("cd ../.. && flutter build ipa --release --export-options-plist=ios/ExportOptions.plist")
+
+    # Upload to App Store
+    upload_to_app_store(
+      api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
+      skip_screenshots: true,
+      skip_metadata: true,
+      skip_app_version_update: true,
+      force: true,
+      submit_for_review: true,
+      automatic_release: false,
+      submission_information: {
+        add_id_info_uses_idfa: false
+      },
+      ipa: "../build/ios/ipa/framer.ipa"
+    )
+  end
+
+  desc "Upload a build to App Store without submitting for review"
+  lane :release_appstore_draft do
+    setup_ci if ENV['CI']
+
+    # Build using Flutter
+    sh("cd ../.. && flutter build ipa --release --export-options-plist=ios/ExportOptions.plist")
+
+    # Upload to App Store (draft)
+    upload_to_app_store(
+      api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
+      skip_screenshots: true,
+      skip_metadata: true,
+      skip_app_version_update: true,
+      submit_for_review: false,
+      ipa: "../build/ios/ipa/framer.ipa"
+    )
+  end
+
+  desc "Build IPA only (no upload)"
+  lane :build_ipa do
+    # Build using Flutter
+    sh("cd ../.. && flutter build ipa --release --export-options-plist=ios/ExportOptions.plist")
+  end
+
+  desc "Download metadata from App Store Connect"
+  lane :download_metadata do
+    download_from_app_store(
+      api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"]
+    )
+  end
+
+  desc "Sync code signing using Match (git storage)"
+  lane :sync_code_signing do
+    match(
+      type: "appstore",
+      readonly: true,
+      api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"]
+    )
+  end
+
+  desc "Register new devices for development"
+  lane :register_devices do
+    register_devices(
+      devices_file: "./devices.txt",
+      api_key_path: ENV["APP_STORE_CONNECT_API_KEY_PATH"]
+    )
+  end
+end

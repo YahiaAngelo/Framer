@@ -1,0 +1,169 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Build a debug APK"
+  lane :build_debug do
+    gradle(
+      task: "clean assemble",
+      build_type: "Debug",
+      project_dir: "android/"
+    )
+  end
+
+  desc "Build a release APK"
+  lane :build_release_apk do
+    gradle(
+      task: "clean assembleRelease",
+      project_dir: "android/",
+      properties: {
+        "android.injected.signing.store.file" => ENV["KEYSTORE_FILE"],
+        "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
+        "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["KEY_PASSWORD"],
+      }
+    )
+  end
+
+  desc "Build a release App Bundle (AAB)"
+  lane :build_release_aab do
+    gradle(
+      task: "clean bundleRelease",
+      project_dir: "android/",
+      properties: {
+        "android.injected.signing.store.file" => ENV["KEYSTORE_FILE"],
+        "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
+        "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["KEY_PASSWORD"],
+      }
+    )
+  end
+
+  desc "Deploy a new version to the Google Play Store - Internal Testing Track"
+  lane :deploy_internal do
+    build_release_aab
+    upload_to_play_store(
+      track: "internal",
+      release_status: "completed",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      json_key_data: ENV["PLAY_STORE_JSON_KEY"]
+    )
+  end
+
+  desc "Deploy a new version to the Google Play Store - Beta Track"
+  lane :deploy_beta do
+    build_release_aab
+    upload_to_play_store(
+      track: "beta",
+      release_status: "completed",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      json_key_data: ENV["PLAY_STORE_JSON_KEY"]
+    )
+  end
+
+  desc "Promote Beta to Production with gradual rollout"
+  lane :deploy_production do
+    build_release_aab
+    upload_to_play_store(
+      track: "production",
+      release_status: "completed",
+      rollout: "0.1", # Start with 10% rollout
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      json_key_data: ENV["PLAY_STORE_JSON_KEY"]
+    )
+  end
+
+  desc "Promote Beta to Production at 100%"
+  lane :deploy_production_full do
+    build_release_aab
+    upload_to_play_store(
+      track: "production",
+      release_status: "completed",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      json_key_data: ENV["PLAY_STORE_JSON_KEY"]
+    )
+  end
+
+  desc "Build and upload to Play Store internal track"
+  lane :release_internal do
+    # Build using Flutter
+    sh("cd ../.. && flutter build appbundle --release")
+
+    # Upload to Play Store
+    upload_to_play_store(
+      track: "internal",
+      release_status: "completed",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      json_key_data: ENV["PLAY_STORE_JSON_KEY"]
+    )
+  end
+
+  desc "Build and upload to Play Store beta track"
+  lane :release_beta do
+    # Build using Flutter
+    sh("cd ../.. && flutter build appbundle --release")
+
+    # Upload to Play Store
+    upload_to_play_store(
+      track: "beta",
+      release_status: "completed",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      json_key_data: ENV["PLAY_STORE_JSON_KEY"]
+    )
+  end
+
+  desc "Build and upload to Play Store production track"
+  lane :release_production do
+    # Build using Flutter
+    sh("cd ../.. && flutter build appbundle --release")
+
+    # Upload to Play Store
+    upload_to_play_store(
+      track: "production",
+      release_status: "completed",
+      rollout: "0.1", # Start with 10% rollout
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      json_key_data: ENV["PLAY_STORE_JSON_KEY"]
+    )
+  end
+end

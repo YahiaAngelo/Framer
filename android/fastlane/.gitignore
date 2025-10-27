@@ -1,0 +1,16 @@
+# Fastlane
+*.cer
+*.mobileprovision
+*.p12
+*.certSigningRequest
+
+# Fastlane Specific
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+fastlane/readme.md
+
+# Service Account JSON (never commit this!)
+**/play-store-credentials.json
+**/google-play-key.json

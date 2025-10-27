@@ -1,0 +1,25 @@
+# Fastlane
+*.cer
+*.certSigningRequest
+*.mobileprovision
+*.p12
+
+# Fastlane Specific
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+fastlane/README.md
+
+# Delivery/Snapshot generated files
+fastlane/metadata
+
+# App Store Connect API Key (never commit this!)
+**/AuthKey_*.p8
+
+# Match
+fastlane/certs
+
+# Temporary files
+*.tmp
+*.swp

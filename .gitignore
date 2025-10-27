@@ -54,8 +54,21 @@ android/app/keystore.jks
 # iOS Signing files
 *.p12
 *.mobileprovision
+*.cer
+*.certSigningRequest
 ios/ExportOptions.plist
+**/AuthKey_*.p8
 
 # Secrets
 *.env
 .env*
+
+# Fastlane
+Gemfile.lock
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
+**/fastlane/readme.md
+**/play-store-credentials.json
+**/google-play-key.json
