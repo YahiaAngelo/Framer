@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
@@ -129,9 +130,11 @@ class ImageDataSource {
 
   Future<void> shareImageFile(String imagePath) async {
     try {
-      await Share.shareXFiles([
-        XFile(imagePath),
-      ], text: 'Check out my framed photo!');
+      await Share.shareXFiles(
+        [XFile(imagePath)],
+        text: 'Check out my framed photo!',
+        sharePositionOrigin: const Rect.fromLTWH(0, 0, 10, 10),
+      );
     } catch (e) {
       throw Exception('Failed to share image: $e');
     }
